@@ -1,42 +1,59 @@
 export abstract class DioAccount {
   private name: string
   private readonly accountNumber: number
-  balance: number = 0
-  private status: boolean = true
+  private balance: number = 0
+  private accountIsValid: boolean = true
 
   constructor(name: string, accountNumber: number){
     this.name = name
     this.accountNumber = accountNumber
   }
 
-  setName = (name: string): void => {
+  public setName = (name: string): void => {
     this.name = name
-    console.log('Nome alterado com sucesso!')
+    console.log(`Seu nome foi alterado com sucesso ${this.name}!`)
   }
 
-  getName = (): string => {
+  public getName = (): string => {
     return this.name
   }
 
-  deposit = (): void => {
-    if(this.validateStatus()){
-      console.log('Voce depositou')
-    }
+  public setAccountStatus = (status: boolean): void => {
+    this.accountIsValid = status;
   }
-
-  withdraw = (): void => {
-    console.log('Voce sacou')
-  }
-
-  getBalance = (): void => {
-    console.log(this.balance)
-  }
-
-  private validateStatus = (): boolean => {
-    if (this.status) {
-      return this.status
+  
+  public isAccountValid = (): boolean  => {
+    if (this.accountIsValid) {
+      return this.accountIsValid;
     }
 
-    throw new Error('Conta inválida')
+    throw new Error('Por favor, valide sua conta')
   }
+
+  public deposit = (valueToDeposit: number): number => {
+    if(this.accountIsValid){
+      this.balance += valueToDeposit;
+      return this.balance;
+    }
+
+    throw new Error('Sua conta não é válida para depósito')
+  }
+
+  public withdraw = (valueToWithdraw: number): number => {
+    if (!this.accountIsValid) {
+      throw new Error('Sua conta não é válida para saque');
+    }
+
+    if (this.balance < valueToWithdraw) {
+      throw new Error('Você não tem saldo suficiente para sacar')
+    }
+
+    this.balance -= valueToWithdraw;
+    return this.balance;
+  }
+
+  public getBalance = (): number => {
+    return this.balance;
+  }
+
 }
